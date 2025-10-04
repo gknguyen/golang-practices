@@ -4,12 +4,18 @@ import (
 	"bufio"
 	"fmt"
 	"note/note"
+	"note/todo"
 	"os"
 	"strings"
 )
 
+type saver interface {
+	Save() error
+}
+
 func main() {
 	title, content := getNoteData()
+	todoText := getTodoData()
 
 	userNote, err := note.New(title, content)
 	if err != nil {
@@ -17,15 +23,37 @@ func main() {
 		return
 	}
 
-	userNote.Display()
-
-	saveErr := userNote.Save()
-	if saveErr != nil {
-		fmt.Println("Error saving note:", saveErr)
+	userTodo, err := todo.New(todoText)
+	if err != nil {
+		fmt.Println("Error creating todo:", err)
 		return
 	}
 
-	fmt.Println("Note saved successfully!")
+	userNote.Display()
+	noteSaveErr := saveData(userNote)
+	if noteSaveErr != nil {
+		return
+	}
+
+	userTodo.Display()
+	todoSaveErr := saveData(userTodo)
+	if todoSaveErr != nil {
+		return
+	}
+}
+
+func saveData(data saver) error {
+	err := data.Save()
+	if err != nil {
+		fmt.Println("Error saving data:", err)
+		return err
+	}
+	fmt.Println("Data saved successfully!")
+	return nil
+}
+
+func getTodoData() string {
+	return getUserInput("Todo text: ")
 }
 
 func getNoteData() (string, string) {

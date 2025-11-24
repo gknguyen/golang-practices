@@ -8,7 +8,7 @@ import (
 )
 
 type FileManager struct {
-	InputFilePath string
+	InputFilePath  string
 	OutputFilePath string
 }
 
@@ -52,7 +52,7 @@ func (fm FileManager) WriteJSON(data any) error {
 
 func New(inputPath, outputPath string) FileManager {
 	return FileManager{
-		InputFilePath: inputPath,
+		InputFilePath:  inputPath,
 		OutputFilePath: outputPath,
 	}
 }

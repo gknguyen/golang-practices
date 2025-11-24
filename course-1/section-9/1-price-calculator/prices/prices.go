@@ -10,14 +10,14 @@ type TaxPriceJob struct {
 	TaxRate     float64
 	InputPrices []float64
 	TaxPrices   map[string]string
-	IOManager	filemanager.FileManager
+	IOManager   filemanager.FileManager
 }
 
 func NewTaxPriceJob(taxRate float64, fm filemanager.FileManager) *TaxPriceJob {
 	return &TaxPriceJob{
 		InputPrices: []float64{10, 20, 30},
 		TaxRate:     taxRate,
-		IOManager:	 fm,
+		IOManager:   fm,
 	}
 }
 

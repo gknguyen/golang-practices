@@ -3,21 +3,21 @@ package prices
 import (
 	"fmt"
 	"priceCalculator/conversion"
-	"priceCalculator/filemanager"
+	"priceCalculator/iomanager"
 )
 
 type TaxPriceJob struct {
-	TaxRate     float64                 `json:"tax_rate"`
-	InputPrices []float64               `json:"input_prices"`
-	TaxPrices   map[string]string       `json:"taxed_prices"`
-	IOManager   filemanager.FileManager `json:"-"`
+	TaxRate     float64             `json:"tax_rate"`
+	InputPrices []float64           `json:"input_prices"`
+	TaxPrices   map[string]string   `json:"taxed_prices"`
+	IOManager   iomanager.IOManager `json:"-"`
 }
 
-func NewTaxPriceJob(taxRate float64, fm filemanager.FileManager) *TaxPriceJob {
+func NewTaxPriceJob(taxRate float64, iom iomanager.IOManager) *TaxPriceJob {
 	return &TaxPriceJob{
 		InputPrices: []float64{10, 20, 30},
 		TaxRate:     taxRate,
-		IOManager:   fm,
+		IOManager:   iom,
 	}
 }
 
@@ -32,7 +32,7 @@ func (job *TaxPriceJob) Process() {
 	}
 
 	job.TaxPrices = result
-	err := job.IOManager.WriteJSON(job)
+	err := job.IOManager.WriteResult(job)
 	if err != nil {
 		fmt.Println(err)
 	}

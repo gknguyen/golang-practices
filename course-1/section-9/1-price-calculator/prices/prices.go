@@ -21,9 +21,10 @@ func NewTaxPriceJob(taxRate float64, iom iomanager.IOManager) *TaxPriceJob {
 	}
 }
 
-func (job *TaxPriceJob) Process() error {
+func (job *TaxPriceJob) Process(doneChan chan bool, errorChan chan error) error {
 	err := job.LoadData()
 	if err != nil {
+		errorChan <- err
 		return err
 	}
 
@@ -35,8 +36,14 @@ func (job *TaxPriceJob) Process() error {
 	}
 
 	job.TaxPrices = result
-	return job.IOManager.WriteResult(job)
+	err = job.IOManager.WriteResult(job)
+	if err != nil {
+		errorChan <- err
+		return err
+	}
 
+	doneChan <- true
+	return nil
 }
 
 func (job *TaxPriceJob) LoadData() error {

@@ -21,8 +21,11 @@ func NewTaxPriceJob(taxRate float64, iom iomanager.IOManager) *TaxPriceJob {
 	}
 }
 
-func (job *TaxPriceJob) Process() {
-	job.LoadData()
+func (job *TaxPriceJob) Process() error {
+	err := job.LoadData()
+	if err != nil {
+		return err
+	}
 
 	result := make(map[string]string)
 
@@ -32,24 +35,22 @@ func (job *TaxPriceJob) Process() {
 	}
 
 	job.TaxPrices = result
-	err := job.IOManager.WriteResult(job)
-	if err != nil {
-		fmt.Println(err)
-	}
+	return job.IOManager.WriteResult(job)
+
 }
 
-func (job *TaxPriceJob) LoadData() {
+func (job *TaxPriceJob) LoadData() error {
 	lines, err := job.IOManager.ReadLines()
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	prices, err := conversion.StringsToFloat(lines)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	job.InputPrices = prices
+
+	return nil
 }

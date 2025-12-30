@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"restApi/models"
+	"restApi/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,4 +24,28 @@ func signup(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"message": "User created successfully"})
+}
+
+func login(ctx *gin.Context) {
+	var user models.Users
+
+	err := ctx.ShouldBindJSON(&user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = user.ValidateCredentials()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := utils.GenerateToken(user.ID, user.Email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }

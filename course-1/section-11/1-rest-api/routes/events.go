@@ -63,9 +63,15 @@ func updateEvent(ctx *gin.Context) {
 		return
 	}
 
-	_, err = models.GetEventByID(id)
+	event, err := models.GetEventByID(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
+		return
+	}
+
+	userId := ctx.GetInt64("userId")
+	if event.UserID != userId {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Forbidden resource"})
 		return
 	}
 
@@ -96,6 +102,12 @@ func deleteEvent(ctx *gin.Context) {
 	event, err := models.GetEventByID(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
+		return
+	}
+
+	userId := ctx.GetInt64("userId")
+	if event.UserID != userId {
+		ctx.JSON(http.StatusForbidden, gin.H{"error": "Forbidden resource"})
 		return
 	}
 

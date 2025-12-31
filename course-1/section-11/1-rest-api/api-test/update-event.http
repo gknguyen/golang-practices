@@ -1,5 +1,6 @@
-PUT http://localhost:8080/events/2
+PUT http://localhost:8080/events/1
 Content-Type: application/json
+Authorization:
 
 {
     "name": "updated Go Conference",
